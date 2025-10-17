@@ -1,0 +1,473 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* Motivational Goal Tracker Colors */
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  /* Semantic Status Colors */
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  /* Progress & Motivation Colors */
+  --color-progress-low: var(--progress-low);
+  --color-progress-medium: var(--progress-medium);
+  --color-progress-high: var(--progress-high);
+  --color-progress-complete: var(--progress-complete);
+
+  /* UI Elements */
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Sidebar */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Chart Colors */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Border Radius System */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+}
+
+:root {
+  /* Base Configuration */
+  --radius: 0.75rem; /* 12px - Modern, friendly roundness */
+
+  /* Light Mode - Energizing & Motivational Palette */
+  --background: oklch(0.99 0 0); /* Near-white with warmth */
+  --foreground: oklch(0.15 0.01 270); /* Deep charcoal with subtle cool */
+
+  /* Cards & Surfaces */
+  --card: oklch(1 0 0); /* Pure white cards for contrast */
+  --card-foreground: oklch(0.15 0.01 270);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.15 0.01 270);
+
+  /* Primary - Vibrant Purple (Ambition & Creativity) */
+  --primary: oklch(0.55 0.22 285); /* Rich purple - energizing */
+  --primary-foreground: oklch(0.99 0 0);
+
+  /* Secondary - Electric Blue (Focus & Progress) */
+  --secondary: oklch(0.92 0.02 240); /* Soft blue background */
+  --secondary-foreground: oklch(0.35 0.15 240); /* Deep blue text */
+
+  /* Accent - Coral/Salmon (Motivation & Energy) */
+  --accent: oklch(0.91 0.03 25); /* Warm peachy background */
+  --accent-foreground: oklch(0.45 0.18 25); /* Coral text */
+
+  /* Success - Fresh Green (Achievement) */
+  --success: oklch(0.65 0.19 150); /* Vibrant green */
+  --success-foreground: oklch(0.99 0 0);
+
+  /* Warning - Warm Amber (Attention) */
+  --warning: oklch(0.75 0.15 75); /* Golden amber */
+  --warning-foreground: oklch(0.25 0.05 75);
+
+  /* Info - Calm Blue (Information) */
+  --info: oklch(0.62 0.17 235); /* Clear blue */
+  --info-foreground: oklch(0.99 0 0);
+
+  /* Destructive - Confident Red */
+  --destructive: oklch(0.58 0.22 25); /* Bold red */
+  --destructive-foreground: oklch(0.99 0 0);
+
+  /* Progress Gradient Colors */
+  --progress-low: oklch(0.72 0.18 25); /* Warm coral - just started */
+  --progress-medium: oklch(0.75 0.15 75); /* Amber - making progress */
+  --progress-high: oklch(0.68 0.17 160); /* Teal - almost there */
+  --progress-complete: oklch(0.65 0.19 150); /* Green - achieved! */
+
+  /* Muted & Neutral Tones */
+  --muted: oklch(0.96 0.005 270); /* Subtle gray with hint of cool */
+  --muted-foreground: oklch(0.50 0.01 270); /* Medium gray text */
+
+  /* Borders & Inputs */
+  --border: oklch(0.90 0.005 270); /* Light borders */
+  --input: oklch(0.90 0.005 270);
+  --ring: oklch(0.55 0.22 285); /* Primary purple for focus rings */
+
+  /* Chart Colors - Vibrant & Distinct */
+  --chart-1: oklch(0.60 0.20 285); /* Purple */
+  --chart-2: oklch(0.62 0.17 235); /* Blue */
+  --chart-3: oklch(0.65 0.19 150); /* Green */
+  --chart-4: oklch(0.72 0.18 25); /* Coral */
+  --chart-5: oklch(0.75 0.15 75); /* Amber */
+
+  /* Sidebar */
+  --sidebar: oklch(0.99 0 0);
+  --sidebar-foreground: oklch(0.15 0.01 270);
+  --sidebar-primary: oklch(0.55 0.22 285);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.96 0.005 270);
+  --sidebar-accent-foreground: oklch(0.15 0.01 270);
+  --sidebar-border: oklch(0.90 0.005 270);
+  --sidebar-ring: oklch(0.55 0.22 285);
+}
+
+.dark {
+  /* Dark Mode - Calm & Focused Palette */
+  --background: oklch(0.12 0.01 270); /* Deep charcoal */
+  --foreground: oklch(0.97 0.005 270); /* Soft white */
+
+  /* Cards & Surfaces */
+  --card: oklch(0.18 0.01 270); /* Elevated dark cards */
+  --card-foreground: oklch(0.97 0.005 270);
+  --popover: oklch(0.18 0.01 270);
+  --popover-foreground: oklch(0.97 0.005 270);
+
+  /* Primary - Brighter Purple for dark mode */
+  --primary: oklch(0.68 0.22 285); /* Lighter, more vibrant purple */
+  --primary-foreground: oklch(0.12 0.01 270);
+
+  /* Secondary - Muted Blue */
+  --secondary: oklch(0.25 0.03 240);
+  --secondary-foreground: oklch(0.75 0.12 240);
+
+  /* Accent - Softer Coral */
+  --accent: oklch(0.28 0.04 25);
+  --accent-foreground: oklch(0.80 0.15 25);
+
+  /* Success - Bright Green */
+  --success: oklch(0.68 0.19 150);
+  --success-foreground: oklch(0.12 0.01 270);
+
+  /* Warning - Bright Amber */
+  --warning: oklch(0.78 0.15 75);
+  --warning-foreground: oklch(0.12 0.01 270);
+
+  /* Info - Bright Blue */
+  --info: oklch(0.68 0.17 235);
+  --info-foreground: oklch(0.12 0.01 270);
+
+  /* Destructive */
+  --destructive: oklch(0.65 0.22 25);
+  --destructive-foreground: oklch(0.97 0.005 270);
+
+  /* Progress Colors - Adjusted for dark mode */
+  --progress-low: oklch(0.75 0.18 25);
+  --progress-medium: oklch(0.78 0.15 75);
+  --progress-high: oklch(0.72 0.17 160);
+  --progress-complete: oklch(0.68 0.19 150);
+
+  /* Muted & Neutral */
+  --muted: oklch(0.25 0.01 270);
+  --muted-foreground: oklch(0.60 0.01 270);
+
+  /* Borders & Inputs */
+  --border: oklch(0.30 0.01 270);
+  --input: oklch(0.30 0.01 270);
+  --ring: oklch(0.68 0.22 285);
+
+  /* Chart Colors - Dark mode optimized */
+  --chart-1: oklch(0.68 0.22 285);
+  --chart-2: oklch(0.68 0.17 235);
+  --chart-3: oklch(0.68 0.19 150);
+  --chart-4: oklch(0.75 0.18 25);
+  --chart-5: oklch(0.78 0.15 75);
+
+  /* Sidebar */
+  --sidebar: oklch(0.15 0.01 270);
+  --sidebar-foreground: oklch(0.97 0.005 270);
+  --sidebar-primary: oklch(0.68 0.22 285);
+  --sidebar-primary-foreground: oklch(0.12 0.01 270);
+  --sidebar-accent: oklch(0.25 0.01 270);
+  --sidebar-accent-foreground: oklch(0.97 0.005 270);
+  --sidebar-border: oklch(0.30 0.01 270);
+  --sidebar-ring: oklch(0.68 0.22 285);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+
+  /* Typography Hierarchy */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-sans font-semibold tracking-tight;
+  }
+
+  h1 {
+    @apply text-4xl sm:text-5xl lg:text-6xl;
+    line-height: 1.1;
+  }
+
+  h2 {
+    @apply text-3xl sm:text-4xl lg:text-5xl;
+    line-height: 1.15;
+  }
+
+  h3 {
+    @apply text-2xl sm:text-3xl lg:text-4xl;
+    line-height: 1.2;
+  }
+
+  h4 {
+    @apply text-xl sm:text-2xl;
+    line-height: 1.3;
+  }
+
+  h5 {
+    @apply text-lg sm:text-xl;
+    line-height: 1.4;
+  }
+
+  h6 {
+    @apply text-base sm:text-lg;
+    line-height: 1.4;
+  }
+
+  p {
+    @apply text-base leading-relaxed;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Custom scrollbar for webkit browsers */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-muted;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/30 rounded-lg;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/50;
+  }
+}
+
+@layer components {
+  /* Goal Card Variants */
+  .goal-card {
+    @apply bg-card text-card-foreground rounded-xl border border-border shadow-sm
+           transition-all duration-200 hover:shadow-md hover:border-primary/20;
+  }
+
+  .goal-card-interactive {
+    @apply bg-card text-card-foreground rounded-xl border border-border shadow-sm
+           transition-all duration-200 hover:shadow-md hover:border-primary/20
+           cursor-pointer hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  /* Progress Bar Base */
+  .progress-bar {
+    @apply relative h-2 w-full overflow-hidden rounded-full bg-muted;
+  }
+
+  .progress-bar-fill {
+    @apply h-full transition-all duration-500 ease-out rounded-full;
+  }
+
+  /* Progress Colors by Percentage */
+  .progress-low {
+    @apply bg-gradient-to-r from-progress-low to-progress-low/80;
+  }
+
+  .progress-medium {
+    @apply bg-gradient-to-r from-progress-medium to-progress-medium/80;
+  }
+
+  .progress-high {
+    @apply bg-gradient-to-r from-progress-high to-progress-high/80;
+  }
+
+  .progress-complete {
+    @apply bg-gradient-to-r from-progress-complete to-success;
+  }
+
+  /* Stat Card */
+  .stat-card {
+    @apply bg-card text-card-foreground rounded-xl border border-border shadow-sm
+           transition-all duration-200 hover:shadow-md hover:border-primary/20
+           p-6 flex flex-col gap-2;
+  }
+
+  .stat-value {
+    @apply text-4xl sm:text-5xl font-bold font-mono tracking-tight;
+  }
+
+  .stat-label {
+    @apply text-sm text-muted-foreground uppercase tracking-wide;
+  }
+
+  /* Quick Add Input */
+  .quick-add {
+    @apply w-full px-4 py-3 rounded-xl border-2 border-border
+           bg-background text-foreground placeholder:text-muted-foreground
+           transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary
+           hover:border-primary/50;
+  }
+
+  /* Status Badges */
+  .badge-active {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+           bg-info/10 text-info border border-info/20;
+  }
+
+  .badge-completed {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+           bg-success/10 text-success border border-success/20;
+  }
+
+  .badge-archived {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+           bg-muted text-muted-foreground border border-border;
+  }
+
+  /* Category Pills */
+  .category-pill {
+    @apply inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium
+           bg-secondary text-secondary-foreground
+           transition-colors duration-200
+           hover:bg-secondary/80 cursor-pointer;
+  }
+
+  /* Motivational Gradient Backgrounds */
+  .gradient-hero {
+    @apply bg-gradient-to-br from-primary/5 via-accent/5 to-secondary/5;
+  }
+
+  .gradient-card {
+    @apply bg-gradient-to-br from-card via-card to-muted/30;
+  }
+
+  /* Filter Button Active State */
+  .filter-active {
+    @apply bg-primary text-primary-foreground;
+  }
+
+  /* Empty State Illustration Container */
+  .empty-state {
+    @apply flex flex-col items-center justify-center py-12 px-4 text-center;
+  }
+
+  /* Floating Action Button (FAB) */
+  .fab {
+    @apply fixed bottom-6 right-6 z-50
+           w-14 h-14 rounded-full
+           bg-primary text-primary-foreground
+           shadow-lg shadow-primary/25
+           flex items-center justify-center
+           transition-all duration-200
+           hover:scale-110 hover:shadow-xl hover:shadow-primary/30
+           active:scale-95;
+  }
+
+  /* Container Utilities */
+  .container-narrow {
+    @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .container-standard {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Section Spacing */
+  .section-padding {
+    @apply py-12 sm:py-16 lg:py-20;
+  }
+
+  /* Glass Morphism Effect */
+  .glass {
+    @apply bg-card/80 backdrop-blur-md border border-border/50;
+  }
+}
+
+@layer utilities {
+  /* Text Gradients for Headings */
+  .text-gradient-primary {
+    @apply bg-gradient-to-r from-primary to-info bg-clip-text text-transparent;
+  }
+
+  .text-gradient-success {
+    @apply bg-gradient-to-r from-success to-progress-high bg-clip-text text-transparent;
+  }
+
+  /* Animations */
+  .animate-scale-in {
+    animation: scale-in 0.2s ease-out;
+  }
+
+  @keyframes scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.3s ease-out;
+  }
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Focus Visible for Accessibility */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+}
