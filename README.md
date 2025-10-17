@@ -1,36 +1,202 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Personal Goal Tracker
+
+A modern, motivational web application for college students and young professionals to set, track, and achieve their personal and academic goals.
+
+## Features
+
+- Clean, energizing UI designed around goal achievement psychology
+- Quick goal capture with inline editing
+- Visual progress tracking with dynamic color-coded progress bars
+- Category and status filtering
+- Responsive mobile-first design
+- Comprehensive stats dashboard
+- Motivational microcopy and celebrations
+
+## Tech Stack
+
+- **Framework**: Next.js 15 with App Router, React 19
+- **Styling**: Tailwind CSS v4, shadcn/ui components (New York style)
+- **Fonts**: Geist Sans & Geist Mono
+- **Backend** (Planned): Supabase (database, authentication, storage)
+- **Email** (Planned): Resend for transactional emails
+- **Analytics** (Planned): PostHog + Google Analytics
+- **Deployment**: Vercel
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- npm, yarn, pnpm, or bun
+
+### Installation
 
 ```bash
+# Install dependencies
+npm install
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### View Design System
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The comprehensive design system is showcased at:
 
-## Learn More
+```
+http://localhost:3000/design-demo
+```
 
-To learn more about Next.js, take a look at the following resources:
+Or view a working dashboard example at:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+http://localhost:3000/dashboard-example
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Design System
 
-## Deploy on Vercel
+We've created a complete design system optimized for rapid development and motivational UX:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Color Palette
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Primary Purple**: Ambition & creativity (CTAs, focus states)
+- **Secondary Blue**: Focus & progress (supporting elements)
+- **Accent Coral**: Energy & motivation (highlights)
+- **Success Green**: Achievement (completions)
+- **Progress Colors**: Dynamic colors based on completion (0-39% coral, 40-69% amber, 70-99% teal, 100% green)
+
+### Key Components
+
+All components are pre-built and ready to use:
+
+- **Goal Card** - Primary content container with progress visualization
+- **Stat Card** - Metrics display with trend indicators
+- **Quick Add Input** - Rapid goal entry with inline submit
+- **Filter Controls** - Category and status filtering
+- **Dashboard Layout** - Complete page structure
+
+### Documentation
+
+- **[Design System Guide](docs/DESIGN_SYSTEM.md)** - Complete design documentation
+- **[Quick Start Guide](docs/DESIGN_QUICK_START.md)** - Get building in 5 minutes
+- **[Screen Mockups](docs/SCREEN_MOCKUPS.md)** - Visual descriptions of all screens
+
+### Usage Example
+
+```tsx
+import { GoalCard } from '@/components/dashboard/goal-card';
+import { StatCard } from '@/components/dashboard/stat-card';
+
+<StatCard
+  label="Active Goals"
+  value={12}
+  trend={{ value: 15, label: 'vs last week' }}
+  variant="info"
+/>
+
+<GoalCard
+  goal={{
+    title: 'Complete React Course',
+    category: 'Learning',
+    progress: 75,
+    status: 'active'
+  }}
+/>
+```
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── layout.tsx              # Root layout with fonts
+│   ├── page.tsx                # Homepage
+│   ├── globals.css             # Design system styles
+│   ├── design-demo/            # Design system showcase
+│   └── dashboard-example/      # Working dashboard example
+├── components/
+│   └── dashboard/              # All dashboard components
+│       ├── goal-card.tsx
+│       ├── stat-card.tsx
+│       ├── quick-add-goal.tsx
+│       ├── filter-controls.tsx
+│       └── dashboard-layout.tsx
+└── lib/
+    └── utils.ts                # Utility functions
+
+docs/
+├── DESIGN_SYSTEM.md            # Complete design documentation
+├── DESIGN_QUICK_START.md       # Quick reference guide
+└── SCREEN_MOCKUPS.md           # Visual mockup descriptions
+```
+
+## Development Commands
+
+```bash
+# Development server (with Turbopack)
+npm run dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
+
+# Run linter
+npm run lint
+```
+
+## Design Principles
+
+1. **Motivational First** - Colors and interactions energize users
+2. **Clarity Over Complexity** - Clean layouts with clear hierarchy
+3. **Mobile-First** - Optimized for thumb-reach and quick interactions
+4. **Progress-Focused** - Visual feedback celebrates every step
+5. **Accessibility Built-In** - WCAG 2.1 AA compliance
+
+## Roadmap
+
+### MVP (Current Phase)
+- [x] Design system implementation
+- [x] Core UI components
+- [x] Dashboard layout
+- [ ] Supabase integration
+- [ ] Authentication (email/password)
+- [ ] CRUD operations for goals
+- [ ] Basic analytics tracking
+
+### Phase 2
+- [ ] Email reminders (Resend)
+- [ ] Advanced filtering
+- [ ] Goal templates
+- [ ] Sharing & social features
+- [ ] Mobile app (React Native)
+
+### Phase 3 (Advanced Automation)
+- [ ] AI goal coach integration
+- [ ] Smart deadline adjustments
+- [ ] Accountability partner bot
+- [ ] Progress digest automation
+- [ ] n8n workflow automation
+
+## Contributing
+
+This project follows the [CLAUDE.md](CLAUDE.md) guidelines for development with Claude Code.
+
+## License
+
+[Add your license here]
+
+## Resources
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Tailwind CSS](https://tailwindcss.com/docs)
+- [shadcn/ui](https://ui.shadcn.com/docs)
+- [Supabase Docs](https://supabase.com/docs)
+- [Lucide Icons](https://lucide.dev)
+
+---
+
+Built with Next.js 15, Tailwind CSS v4, and shadcn/ui
