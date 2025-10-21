@@ -7,7 +7,16 @@
       "mcp__playwright__browser_take_screenshot",
       "mcp__playwright__browser_click",
       "mcp__playwright__browser_type",
-      "mcp__playwright__browser_hover"
+      "mcp__playwright__browser_hover",
+      "Bash(cat:*)",
+      "mcp__supabase__list_projects",
+      "mcp__supabase__list_tables",
+      "mcp__supabase__get_project_url",
+      "mcp__supabase__get_anon_key",
+      "mcp__supabase__apply_migration",
+      "mcp__supabase__execute_sql",
+      "Bash(npm run build:*)",
+      "mcp__supabase__get_advisors"
     ],
     "deny": [],
     "ask": []

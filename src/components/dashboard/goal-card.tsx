@@ -1,13 +1,12 @@
-import { type ReactNode } from 'react';
 
 export interface Goal {
   id: string;
   title: string;
-  description?: string;
-  category: string;
+  description?: string | null;
+  category?: string | null;
   progress: number;
   status: 'active' | 'completed' | 'archived';
-  target_date?: string;
+  target_date?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -15,9 +14,12 @@ export interface Goal {
 interface GoalCardProps {
   goal: Goal;
   onClick?: () => void;
+  onStatusChange?: (goalId: string, newStatus: 'active' | 'completed' | 'archived') => void;
 }
 
-export function GoalCard({ goal, onClick }: GoalCardProps) {
+import { CheckCircle2, Archive, RotateCcw } from 'lucide-react';
+
+export function GoalCard({ goal, onClick, onStatusChange }: GoalCardProps) {
   const getProgressColorClass = (progress: number) => {
     if (progress === 100) return 'progress-complete';
     if (progress >= 70) return 'progress-high';
@@ -50,6 +52,11 @@ export function GoalCard({ goal, onClick }: GoalCardProps) {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
+  const handleStatusClick = (e: React.MouseEvent, newStatus: 'active' | 'completed' | 'archived') => {
+    e.stopPropagation();
+    onStatusChange?.(goal.id, newStatus);
+  };
+
   return (
     <div
       className={onClick ? 'goal-card-interactive' : 'goal-card'}
@@ -58,7 +65,7 @@ export function GoalCard({ goal, onClick }: GoalCardProps) {
       <div className="p-5 space-y-4">
         {/* Header with Category and Status */}
         <div className="flex items-start justify-between gap-3">
-          <span className="category-pill">{goal.category}</span>
+          <span className="category-pill">{goal.category || 'Uncategorized'}</span>
           <span className={getStatusBadgeClass(goal.status)}>
             {goal.status}
           </span>
@@ -95,6 +102,60 @@ export function GoalCard({ goal, onClick }: GoalCardProps) {
           <div className="flex items-center justify-between text-xs">
             <span className="text-muted-foreground">Target</span>
             <span className="font-medium">{formatDate(goal.target_date)}</span>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        {onStatusChange && (
+          <div className="pt-3 border-t border-border flex gap-2">
+            {goal.status !== 'completed' && (
+              <button
+                onClick={(e) => handleStatusClick(e, 'completed')}
+                className="flex-1 px-3 py-2 rounded-lg bg-success/10 text-success
+                         hover:bg-success/20 transition-all text-xs font-medium
+                         flex items-center justify-center gap-1.5"
+                title="Mark as completed"
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                <span className="hidden sm:inline">Complete</span>
+              </button>
+            )}
+            {goal.status === 'completed' && (
+              <button
+                onClick={(e) => handleStatusClick(e, 'active')}
+                className="flex-1 px-3 py-2 rounded-lg bg-muted hover:bg-muted/80
+                         transition-all text-xs font-medium
+                         flex items-center justify-center gap-1.5"
+                title="Mark as active"
+              >
+                <RotateCcw className="w-4 h-4" />
+                <span className="hidden sm:inline">Reactivate</span>
+              </button>
+            )}
+            {goal.status !== 'archived' && (
+              <button
+                onClick={(e) => handleStatusClick(e, 'archived')}
+                className="flex-1 px-3 py-2 rounded-lg bg-muted hover:bg-muted/80
+                         transition-all text-xs font-medium
+                         flex items-center justify-center gap-1.5"
+                title="Archive goal"
+              >
+                <Archive className="w-4 h-4" />
+                <span className="hidden sm:inline">Archive</span>
+              </button>
+            )}
+            {goal.status === 'archived' && (
+              <button
+                onClick={(e) => handleStatusClick(e, 'active')}
+                className="flex-1 px-3 py-2 rounded-lg bg-muted hover:bg-muted/80
+                         transition-all text-xs font-medium
+                         flex items-center justify-center gap-1.5"
+                title="Restore goal"
+              >
+                <RotateCcw className="w-4 h-4" />
+                <span className="hidden sm:inline">Restore</span>
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -158,7 +219,7 @@ export function GoalCardCompact({ goal, onClick }: GoalCardProps) {
       {/* Content */}
       <div className="flex-1 min-w-0">
         <h4 className="font-semibold text-sm truncate">{goal.title}</h4>
-        <p className="text-xs text-muted-foreground truncate">{goal.category}</p>
+        <p className="text-xs text-muted-foreground truncate">{goal.category || 'Uncategorized'}</p>
       </div>
 
       {/* Status Badge */}
