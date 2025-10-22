@@ -165,13 +165,6 @@ export function GoalCard({ goal, onClick, onStatusChange }: GoalCardProps) {
 
 // Compact variant for list views
 export function GoalCardCompact({ goal, onClick }: GoalCardProps) {
-  const getProgressColorClass = (progress: number) => {
-    if (progress === 100) return 'progress-complete';
-    if (progress >= 70) return 'progress-high';
-    if (progress >= 40) return 'progress-medium';
-    return 'progress-low';
-  };
-
   return (
     <div
       className={`flex items-center gap-4 p-4 bg-card rounded-lg border border-border
