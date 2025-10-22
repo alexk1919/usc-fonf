@@ -89,9 +89,9 @@ All components are pre-built and ready to use:
 
 ### Documentation
 
-- **[Design System Guide](docs/DESIGN_SYSTEM.md)** - Complete design documentation
-- **[Quick Start Guide](docs/DESIGN_QUICK_START.md)** - Get building in 5 minutes
-- **[Screen Mockups](docs/SCREEN_MOCKUPS.md)** - Visual descriptions of all screens
+- **[Design System Guide](docs/251016/DESIGN_SYSTEM.md)** - Complete design documentation
+- **[Quick Start Guide](docs/251016/DESIGN_QUICK_START.md)** - Get building in 5 minutes
+- **[Screen Mockups](docs/251016/SCREEN_MOCKUPS.md)** - Visual descriptions of all screens
 
 ### Usage Example
 
