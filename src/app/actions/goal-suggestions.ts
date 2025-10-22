@@ -50,7 +50,7 @@ export interface GoalSuggestionsResponse {
   error?: {
     code: string;
     message: string;
-    details?: any;
+    details?: unknown;
   };
 }
 
@@ -106,20 +106,7 @@ export async function getGoalSuggestions(
     }
 
     // 2. Fetch user's existing goals
-    const { data: existingGoals, error: goalsError } = await getGoals();
-
-    if (goalsError) {
-      return {
-        success: false,
-        request_id: crypto.randomUUID(),
-        user_id: user.id,
-        error: {
-          code: 'GOALS_FETCH_FAILED',
-          message: 'Failed to fetch existing goals',
-          details: goalsError,
-        },
-      };
-    }
+    const existingGoals = await getGoals();
 
     // 3. Calculate goal statistics
     const completedGoals = existingGoals.filter((g) => g.status === 'completed');

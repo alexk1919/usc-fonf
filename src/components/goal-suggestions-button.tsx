@@ -19,6 +19,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Sparkles, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
 import { getGoalSuggestions, type GoalSuggestion } from '@/app/actions/goal-suggestions';
 import { createGoal } from '@/app/actions/goals';
+import type { Goal } from '@/lib/db/goals';
 import { toast } from 'sonner';
 
 // Map n8n difficulty values to user-friendly display names
@@ -40,7 +41,7 @@ interface GoalSuggestionsButtonProps {
    * Optional callback when a goal is successfully added
    * Use this to refresh the parent component's goal list
    */
-  onGoalAdded?: (goal: any) => void;
+  onGoalAdded?: (goal: Goal) => void;
 }
 
 /**
