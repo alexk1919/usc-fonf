@@ -4,20 +4,23 @@ A modern, motivational web application for college students and young profession
 
 ## Features
 
+- ✅ **Full Goal Management** - Create, update, complete, archive, and restore goals
+- ✅ **Category Selection** - Organize goals into Learning, Career, Health, or Personal
+- ✅ **Status Management** - Mark goals as completed, archive old goals, or reactivate them
+- ✅ **Visual Progress Tracking** - Dynamic color-coded progress bars (0-100%)
+- ✅ **Smart Filtering** - Filter by category and status for focused views
+- ✅ **Real-time Sync** - All changes instantly saved to Supabase database
+- ✅ **Secure Authentication** - Email/password login with row-level security
+- ✅ **Responsive Design** - Mobile-first UI optimized for quick interactions
+- ✅ **Stats Dashboard** - Track active goals, completions, and average progress
 - Clean, energizing UI designed around goal achievement psychology
-- Quick goal capture with inline editing
-- Visual progress tracking with dynamic color-coded progress bars
-- Category and status filtering
-- Responsive mobile-first design
-- Comprehensive stats dashboard
-- Motivational microcopy and celebrations
 
 ## Tech Stack
 
 - **Framework**: Next.js 15 with App Router, React 19
 - **Styling**: Tailwind CSS v4, shadcn/ui components (New York style)
 - **Fonts**: Geist Sans & Geist Mono
-- **Backend** (Planned): Supabase (database, authentication, storage)
+- **Backend**: Supabase (PostgreSQL database, authentication, file storage)
 - **Email** (Planned): Resend for transactional emails
 - **Analytics** (Planned): PostHog + Google Analytics
 - **Deployment**: Vercel
@@ -28,6 +31,7 @@ A modern, motivational web application for college students and young profession
 
 - Node.js 18+
 - npm, yarn, pnpm, or bun
+- Supabase account (for database and authentication)
 
 ### Installation
 
@@ -35,25 +39,31 @@ A modern, motivational web application for college students and young profession
 # Install dependencies
 npm install
 
+# Set up environment variables
+# Copy .env.example to .env.local and add your Supabase credentials
+cp .env.example .env.local
+
 # Run development server
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to view the app.
 
-### View Design System
+### First Time Setup
 
-The comprehensive design system is showcased at:
+1. **Sign up** - Create an account at `/auth/signup`
+2. **Create a goal** - Use the quick-add form to create your first goal
+3. **Choose a category** - Select from Learning, Career, Health, or Personal
+4. **Track progress** - Mark goals as complete or archive them when done
 
-```
-http://localhost:3000/design-demo
-```
+### Application Routes
 
-Or view a working dashboard example at:
-
-```
-http://localhost:3000/dashboard-example
-```
+- `/` - Landing page (redirects to dashboard if logged in)
+- `/auth/login` - Sign in
+- `/auth/signup` - Create account
+- `/dashboard` - Main dashboard (requires authentication)
+- `/dashboard-example` - UI demo with mock data
+- `/design-demo` - Design system showcase
 
 ## Design System
 
@@ -112,21 +122,43 @@ import { StatCard } from '@/components/dashboard/stat-card';
 src/
 ├── app/
 │   ├── layout.tsx              # Root layout with fonts
-│   ├── page.tsx                # Homepage
+│   ├── page.tsx                # Landing page
 │   ├── globals.css             # Design system styles
-│   ├── design-demo/            # Design system showcase
-│   └── dashboard-example/      # Working dashboard example
+│   ├── actions/
+│   │   └── goals.ts            # Server actions for CRUD
+│   ├── auth/
+│   │   ├── login/              # Login page
+│   │   ├── signup/             # Signup page
+│   │   └── callback/           # OAuth callback
+│   ├── dashboard/
+│   │   ├── page.tsx            # Main dashboard (server component)
+│   │   └── dashboard-client.tsx # Client interactions
+│   ├── dashboard-example/      # UI demo with mock data
+│   └── design-demo/            # Design system showcase
 ├── components/
 │   └── dashboard/              # All dashboard components
-│       ├── goal-card.tsx
-│       ├── stat-card.tsx
-│       ├── quick-add-goal.tsx
-│       ├── filter-controls.tsx
-│       └── dashboard-layout.tsx
+│       ├── goal-card.tsx       # Goal display with status actions
+│       ├── stat-card.tsx       # Metrics display
+│       ├── quick-add-goal.tsx  # Quick add with category selector
+│       ├── filter-controls.tsx # Category/status filters
+│       └── dashboard-layout.tsx # Page layout structure
 └── lib/
+    ├── supabase/
+    │   ├── client.ts           # Browser Supabase client
+    │   ├── server.ts           # Server Supabase client
+    │   └── middleware.ts       # Auth middleware helpers
+    ├── db/
+    │   └── goals.ts            # Database operations
     └── utils.ts                # Utility functions
 
+middleware.ts                   # Next.js middleware (route protection)
+
 docs/
+├── 251021/
+│   ├── implementation-plan.md  # Complete implementation details
+│   ├── completion-summary.md   # Detailed completion report
+│   ├── feature-update.md       # New features documentation
+│   └── BONUS-FEATURES.md       # Category & status management
 ├── DESIGN_SYSTEM.md            # Complete design documentation
 ├── DESIGN_QUICK_START.md       # Quick reference guide
 └── SCREEN_MOCKUPS.md           # Visual mockup descriptions
@@ -158,32 +190,80 @@ npm run lint
 
 ## Roadmap
 
-### MVP (Current Phase)
+### ✅ MVP - COMPLETED (October 21, 2025)
 - [x] Design system implementation
 - [x] Core UI components
 - [x] Dashboard layout
-- [ ] Supabase integration
-- [ ] Authentication (email/password)
-- [ ] CRUD operations for goals
-- [ ] Basic analytics tracking
+- [x] **Supabase integration** (PostgreSQL + RLS)
+- [x] **Authentication** (email/password with session management)
+- [x] **CRUD operations for goals** (create, read, update, delete)
+- [x] **File storage** (avatars bucket with user-scoped policies)
+- [x] **Category selection** (Learning, Career, Health, Personal)
+- [x] **Status management** (complete, archive, restore)
+- [x] **Smart filtering** (by category and status)
+- [x] **Production build** (deployed-ready)
 
-### Phase 2
-- [ ] Email reminders (Resend)
-- [ ] Advanced filtering
-- [ ] Goal templates
+### Phase 2 (Next Steps)
+- [ ] Progress editing (slider/input for updating percentage)
+- [ ] Goal details modal/page (edit all fields)
+- [ ] Email reminders (Resend integration)
+- [ ] Basic analytics tracking (PostHog)
+- [ ] Goal templates by category
+- [ ] Delete confirmation dialogs
+- [ ] Bulk actions (multi-select)
+
+### Phase 3 (Enhanced Features)
+- [ ] Target date picker
+- [ ] Goal descriptions/notes
 - [ ] Sharing & social features
+- [ ] Dark mode toggle
+- [ ] Keyboard shortcuts
+- [ ] Goal history/activity log
 - [ ] Mobile app (React Native)
 
-### Phase 3 (Advanced Automation)
+### Phase 4 (Advanced Automation)
 - [ ] AI goal coach integration
 - [ ] Smart deadline adjustments
 - [ ] Accountability partner bot
 - [ ] Progress digest automation
 - [ ] n8n workflow automation
 
+## Database Schema
+
+The app uses Supabase with the following schema:
+
+### Goals Table
+- `id` - UUID primary key
+- `user_id` - UUID foreign key to auth.users
+- `title` - Text (required)
+- `description` - Text (nullable)
+- `category` - Text (nullable) - Learning, Career, Health, or Personal
+- `target_date` - Date (nullable)
+- `progress` - Integer (0-100)
+- `status` - Text (active/completed/archived)
+- `created_at` - Timestamp with timezone
+- `updated_at` - Timestamp with timezone (auto-updated)
+
+### Security
+- Row Level Security (RLS) enabled
+- Users can only access their own goals
+- 4 RLS policies (SELECT, INSERT, UPDATE, DELETE)
+- All operations are user-scoped
+
+## Environment Variables
+
+Create a `.env.local` file with:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your-project-url.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+
 ## Contributing
 
 This project follows the [CLAUDE.md](CLAUDE.md) guidelines for development with Claude Code.
+
+For detailed implementation notes, see [docs/251021/implementation-plan.md](docs/251021/implementation-plan.md).
 
 ## License
 
