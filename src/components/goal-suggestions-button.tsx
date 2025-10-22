@@ -35,11 +35,19 @@ const difficultyVariant: Record<GoalSuggestion['difficulty'], 'default' | 'secon
   hard: 'default',
 };
 
+interface GoalSuggestionsButtonProps {
+  /**
+   * Optional callback when a goal is successfully added
+   * Use this to refresh the parent component's goal list
+   */
+  onGoalAdded?: (goal: any) => void;
+}
+
 /**
  * Button component that fetches and displays AI-generated goal suggestions
  * Allows users to expand milestones and add suggestions directly to their goal list
  */
-export function GoalSuggestionsButton() {
+export function GoalSuggestionsButton({ onGoalAdded }: GoalSuggestionsButtonProps = {}) {
   const [suggestions, setSuggestions] = useState<GoalSuggestion[]>([]);
   const [loading, setLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -86,6 +94,11 @@ export function GoalSuggestionsButton() {
       // If no more suggestions, hide the section
       if (suggestions.length === 1) {
         setShowSuggestions(false);
+      }
+
+      // Notify parent component
+      if (onGoalAdded && result.data) {
+        onGoalAdded(result.data);
       }
     } else {
       toast.error(result.error || 'Failed to add goal');

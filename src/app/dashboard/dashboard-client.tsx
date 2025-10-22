@@ -20,6 +20,7 @@ import { GoalCard } from '@/components/dashboard/goal-card';
 import { StatCard, StatCardGrid } from '@/components/dashboard/stat-card';
 import { QuickAddGoal } from '@/components/dashboard/quick-add-goal';
 import { FilterControls, type FilterOption } from '@/components/dashboard/filter-controls';
+import { GoalSuggestionsButton } from '@/components/goal-suggestions-button';
 import { createGoal, updateGoal } from '@/app/actions/goals';
 import { createClient } from '@/lib/supabase/client';
 import type { Goal } from '@/lib/db/goals';
@@ -117,6 +118,11 @@ export function DashboardClient({ initialGoals, user }: DashboardClientProps) {
     });
   };
 
+  // Handle goal added from suggestions
+  const handleGoalFromSuggestion = (goal: Goal) => {
+    setGoals([goal, ...goals]);
+  };
+
   // Handle status change
   const handleStatusChange = async (goalId: string, newStatus: 'active' | 'completed' | 'archived') => {
     startTransition(async () => {
@@ -171,31 +177,44 @@ export function DashboardClient({ initialGoals, user }: DashboardClientProps) {
       }
       quickAdd={<QuickAddGoal onAdd={handleAddGoal} />}
       stats={
-        <StatCardGrid>
-          <StatCard
-            label="Active Goals"
-            value={activeGoals}
-            icon={<Target className="w-5 h-5" />}
-            variant="info"
-          />
-          <StatCard
-            label="Completed"
-            value={completedGoals}
-            icon={<CheckCircle2 className="w-5 h-5" />}
-            variant="success"
-          />
-          <StatCard
-            label="In Progress"
-            value={inProgressGoals}
-            icon={<Clock className="w-5 h-5" />}
-          />
-          <StatCard
-            label="Avg Progress"
-            value={`${avgProgress}%`}
-            icon={<TrendingUp className="w-5 h-5" />}
-            variant="success"
-          />
-        </StatCardGrid>
+        <>
+          <StatCardGrid>
+            <StatCard
+              label="Active Goals"
+              value={activeGoals}
+              icon={<Target className="w-5 h-5" />}
+              variant="info"
+            />
+            <StatCard
+              label="Completed"
+              value={completedGoals}
+              icon={<CheckCircle2 className="w-5 h-5" />}
+              variant="success"
+            />
+            <StatCard
+              label="In Progress"
+              value={inProgressGoals}
+              icon={<Clock className="w-5 h-5" />}
+            />
+            <StatCard
+              label="Avg Progress"
+              value={`${avgProgress}%`}
+              icon={<TrendingUp className="w-5 h-5" />}
+              variant="success"
+            />
+          </StatCardGrid>
+
+          {/* Goal Suggestions Section */}
+          <div className="mt-6 goal-card">
+            <div className="mb-4">
+              <h2 className="text-xl font-semibold mb-1">Need Inspiration?</h2>
+              <p className="text-sm text-muted-foreground">
+                Get AI-powered goal suggestions tailored to your profile and progress
+              </p>
+            </div>
+            <GoalSuggestionsButton onGoalAdded={handleGoalFromSuggestion} />
+          </div>
+        </>
       }
       filters={
         <FilterControls

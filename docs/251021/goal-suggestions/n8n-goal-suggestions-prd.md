@@ -142,15 +142,21 @@ ONLY suggest goals in these categories: {{context.request_params.categories.join
 
 OUTPUT FORMAT (JSON):
 {
-  "suggestions": [
+  "goal_suggestions": [
     {
+      "id": "goal_001",
       "title": "Goal title",
-      "description": "1-2 sentence description explaining why this goal matters",
+      "description": "2-3 sentence description explaining what this goal entails and why it matters",
       "category": "Learning|Career|Health|Personal",
-      "suggested_target_date": "YYYY-MM-DD",
-      "estimated_duration_weeks": 8,
-      "difficulty": "easy|moderate|challenging",
-      "rationale": "Why this goal fits the user's profile"
+      "difficulty": "easy|medium|hard",
+      "estimated_duration_days": 45,
+      "why_suggested": "Why this goal fits the user's profile and complements their existing goals",
+      "milestones": [
+        "First milestone step",
+        "Second milestone step",
+        "Third milestone step",
+        "..."
+      ]
     }
   ]
 }
@@ -175,28 +181,80 @@ OUTPUT FORMAT (JSON):
   - Categories are valid enum values
   - Target dates are future dates
 
-### 6. Enrich Suggestions Node
+### 6. Format Response Node
 - **Node**: Function/Code
-- **Purpose**: Add metadata and formatting
-- **Additions**:
-  - Add unique `suggestion_id` to each suggestion
-  - Add `confidence_score` based on rationale strength
-  - Add `quick_win` flag for easy/short goals
-  - Add `streak_compatible` flag for daily/weekly goals
+- **Purpose**: Wrap suggestions in output structure
+- **Output Structure**:
+  ```json
+  {
+    "output": {
+      "goal_suggestions": [...]
+    }
+  }
+  ```
 
-### 7. Format Response Node
-- **Node**: Function/Code
-- **Purpose**: Structure final response
-- **Output**: See Response Format section below
-
-### 8. Return Response Node
+### 7. Return Response Node
 - **Node**: Respond to Webhook
 - **Status**: 200 OK
 - **Content-Type**: application/json
+- **Output**: Array containing the output object (see Response Format section)
 
 ## Response Format
 
-### Success Response (200 OK)
+### Actual n8n Response (Raw)
+
+**IMPORTANT**: This is the actual response structure returned by the n8n workflow (as of 2025-10-21):
+
+```json
+[
+  {
+    "output": {
+      "goal_suggestions": [
+        {
+          "id": "goal_001",
+          "title": "Build a Full-Stack TypeScript Project",
+          "description": "Create a complete full-stack application using TypeScript for both frontend and backend. This project will consolidate your TypeScript knowledge and Next.js skills by building a real-world application such as a task management system, blog platform, or API-driven dashboard. Include features like authentication, database integration, and deployment to production.",
+          "category": "Learning",
+          "difficulty": "medium",
+          "estimated_duration_days": 45,
+          "why_suggested": "This goal directly builds on your active TypeScript and Next.js learning. Since you've completed a portfolio website and are currently learning these technologies, creating a full-stack project is the natural next step. It bridges learning and practical application, aligning perfectly with your 72% completion rate for moderate difficulty challenges.",
+          "milestones": [
+            "Plan application architecture and choose tech stack",
+            "Set up project structure with TypeScript configuration",
+            "Implement frontend components and routing with Next.js",
+            "Build backend API with TypeScript (Node.js/Express or Next.js API routes)",
+            "Integrate database and implement CRUD operations",
+            "Add authentication and authorization",
+            "Write tests and documentation",
+            "Deploy to production platform (Vercel, Railway, or similar)"
+          ]
+        },
+        {
+          "id": "goal_002",
+          "title": "Contribute to 3 Open Source Projects",
+          "description": "Make meaningful contributions to three open source projects on GitHub within your tech stack.",
+          "category": "Career",
+          "difficulty": "medium",
+          "estimated_duration_days": 60,
+          "why_suggested": "Open source contributions are excellent for career growth and will help you apply your TypeScript learning in real-world codebases.",
+          "milestones": [
+            "Research and identify 5-7 potential projects aligned with your skills",
+            "Set up development environment and understand contribution guidelines",
+            "Make first contribution (documentation, bug fix, or small feature)",
+            "Complete second contribution with increased complexity",
+            "Complete third contribution and engage with project maintainers",
+            "Update your portfolio and LinkedIn with open source contributions"
+          ]
+        }
+      ]
+    }
+  }
+]
+```
+
+### App-Formatted Response (After Processing)
+
+The Server Action transforms the n8n response and adds calculated fields:
 
 ```json
 {
@@ -205,45 +263,21 @@ OUTPUT FORMAT (JSON):
   "user_id": "550e8400-e29b-41d4-a716-446655440000",
   "suggestions": [
     {
-      "suggestion_id": "sugg-uuid-1",
-      "title": "Build a full-stack project with Next.js and Supabase",
-      "description": "Apply your TypeScript and Next.js knowledge by creating a real-world application from scratch.",
+      "id": "goal_001",
+      "title": "Build a Full-Stack TypeScript Project",
+      "description": "Create a complete full-stack application using TypeScript...",
       "category": "Learning",
-      "suggested_target_date": "2026-02-28",
-      "estimated_duration_weeks": 12,
-      "difficulty": "challenging",
-      "rationale": "Complements your existing TypeScript and Next.js learning goals by providing hands-on application. Your 72% completion rate shows you handle challenging goals well.",
-      "metadata": {
-        "confidence_score": 0.85,
-        "quick_win": false,
-        "streak_compatible": false,
-        "related_to_goals": ["goal-uuid-1", "goal-uuid-2"]
-      }
-    },
-    {
-      "suggestion_id": "sugg-uuid-2",
-      "title": "Read 2 technical books on system design",
-      "description": "Deepen your understanding of scalable architecture patterns.",
-      "category": "Learning",
-      "suggested_target_date": "2025-12-31",
-      "estimated_duration_weeks": 16,
-      "difficulty": "moderate",
-      "rationale": "Builds on your Learning category focus and prepares you for advanced career opportunities.",
-      "metadata": {
-        "confidence_score": 0.78,
-        "quick_win": false,
-        "streak_compatible": true,
-        "related_to_goals": []
-      }
+      "difficulty": "medium",
+      "estimated_duration_days": 45,
+      "why_suggested": "This goal directly builds on your active TypeScript and Next.js learning...",
+      "milestones": [
+        "Plan application architecture and choose tech stack",
+        "Set up project structure with TypeScript configuration",
+        "..."
+      ],
+      "suggested_target_date": "2025-12-05"
     }
-  ],
-  "metadata": {
-    "generation_timestamp": "2025-10-21T15:30:15Z",
-    "ai_model": "gpt-4-turbo",
-    "processing_time_ms": 2341,
-    "suggestions_generated": 5,
-    "categories_covered": ["Learning", "Career", "Health"]
-  }
+  ]
 }
 ```
 
@@ -306,20 +340,16 @@ import { getGoals } from '@/lib/db/goals';
 import type { Goal } from '@/lib/db/goals';
 
 export interface GoalSuggestion {
-  suggestion_id: string;
+  id: string;
   title: string;
   description: string;
   category: 'Learning' | 'Career' | 'Health' | 'Personal';
-  suggested_target_date: string;
-  estimated_duration_weeks: number;
-  difficulty: 'easy' | 'moderate' | 'challenging';
-  rationale: string;
-  metadata: {
-    confidence_score: number;
-    quick_win: boolean;
-    streak_compatible: boolean;
-    related_to_goals: string[];
-  };
+  difficulty: 'easy' | 'medium' | 'hard';
+  estimated_duration_days: number;
+  why_suggested: string;
+  milestones: string[];
+  // Calculated field (not from n8n)
+  suggested_target_date?: string;
 }
 
 export interface GoalSuggestionsResponse {
@@ -327,13 +357,6 @@ export interface GoalSuggestionsResponse {
   request_id: string;
   user_id: string;
   suggestions?: GoalSuggestion[];
-  metadata?: {
-    generation_timestamp: string;
-    ai_model: string;
-    processing_time_ms: number;
-    suggestions_generated: number;
-    categories_covered: string[];
-  };
   error?: {
     code: string;
     message: string;
