@@ -474,8 +474,8 @@ When adding to the design system:
 ## Support & Resources
 
 ### Internal Resources
-- [CLAUDE.md](../CLAUDE.md) - Development guidelines
-- [README.md](../README.md) - Project overview
+- [CLAUDE.md](../../CLAUDE.md) - Development guidelines
+- [README.md](../../README.md) - Project overview
 - Component files in `src/components/dashboard/`
 
 ### External Resources

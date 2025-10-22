@@ -17,8 +17,6 @@ import {
 } from '@/components/dashboard/quick-add-goal';
 import { FilterControls } from '@/components/dashboard/filter-controls';
 import {
-  DashboardLayout,
-  DashboardHeader,
   GoalsGrid,
   EmptyState,
 } from '@/components/dashboard/dashboard-layout';
