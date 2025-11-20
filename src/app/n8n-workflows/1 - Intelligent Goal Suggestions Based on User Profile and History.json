@@ -1,0 +1,380 @@
+{
+  "name": "1 - Intelligent Goal Suggestions Based on User Profile and History",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "goal-suggestions",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "530abc09-58a4-42b9-908e-ab4d8e98e159",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        704,
+        496
+      ],
+      "webhookId": "10510873-340b-48d6-af18-ed62ad38d83b"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "maxSuggestions",
+              "value": 10,
+              "type": "number"
+            },
+            {
+              "id": "id-2",
+              "name": "defaultSuggestionCount",
+              "value": 5,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "c856ed11-6e5b-4c37-ac63-9d782d66f748",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        928,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Validate input data from webhook\n  const items = $input.all();\n\n  for (const item of items) {\n    const data = item.json.body; // Access the body property\n\n    // Validate user.id is UUID\n    if (!data.user || !data.user.id) {\n      throw new Error('user.id is required');\n    }\n\n    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;\n    if (!uuidRegex.test(data.user.id)) {\n      throw new Error('user.id must be a valid UUID');\n    }\n\n    // Validate user.email is valid email\n    if (!data.user.email) {\n      throw new Error('user.email is required');\n    }\n\n    const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n    if (!emailRegex.test(data.user.email)) {\n      throw new Error('user.email must be a valid email address');\n    }\n\n    // Validate context.existing_goals is array\n    if (!data.context || !Array.isArray(data.context.existing_goals)) {\n      throw new Error('context.existing_goals must be an array');\n    }\n\n    // Validate context.request_params.suggestion_count is less than or equal to 10\n    if (data.context && data.context.request_params && data.context.request_params.suggestion_count !== undefined) {\n      if (typeof data.context.request_params.suggestion_count !== 'number') {\n        throw new Error('context.request_params.suggestion_count must be a number');\n      }\n      if (data.context.request_params.suggestion_count > 10) {\n        throw new Error('context.request_params.suggestion_count must be less than or equal to 10');\n      }\n    }\n  }\n\n  // Return items with the body data extracted for easier access in next nodes\n  return items.map(item => ({\n    json: item.json.body\n  }));"
+      },
+      "id": "dfa35f6b-0cd3-4d37-8c7b-69e24eaa9982",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1152,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build AI Prompt for Goal Suggestions\n// This code constructs a comprehensive prompt for the AI agent\n// using user profile data, existing goals, and request parameters\n\nconst items = $input.all();\nconst inputData = items[0].json;\n\n// Extract user information\nconst user = inputData.user || {};\nconst userId = user.id || 'unknown';\nconst userEmail = user.email || 'unknown';\nconst userName = user.metadata?.name || 'User';\nconst userPreferences = user.metadata?.preferences || {};\n\n// Extract context information\nconst context = inputData.context || {};\nconst existingGoals = context.existing_goals || [];\nconst completedGoalsCount = context.completed_goals_count || 0;\nconst activeGoalsCount = context.active_goals_count || 0;\nconst averageCompletionRate = context.average_completion_rate || 0;\nconst mostActiveCategories = context.most_active_categories || [];\n\n// Build existing goals summary\nconst goalSummary = existingGoals.length > 0 \n  ? existingGoals.map(g => `- ${g.title || g.name}: ${g.description || 'No description'} (Status: ${g.status || 'unknown'})`).join('\\n')\n  : 'No existing goals';\n\n// Extract request parameters\nconst requestParams = context.request_params || {};\nconst category = requestParams.category || 'general';\nconst timeframe = requestParams.timeframe || 'short-term';\nconst numberOfSuggestions = requestParams.suggestion_count || 5;\nconst focusArea = requestParams.focus_area || '';\nconst difficulty = requestParams.difficulty || '';\n\n// Build the AI prompt\nconst prompt = `You are an intelligent goal-setting assistant. Based on the user's profile and existing goals, suggest ${numberOfSuggestions} personalized, actionable goals.\n\nUser Information:\n- User ID: ${userId}\n- Name: ${userName}\n- Email: ${userEmail}\n- Preferences: ${JSON.stringify(userPreferences, null, 2)}\n\nUser Statistics:\n- Completed Goals: ${completedGoalsCount}\n- Active Goals: ${activeGoalsCount}\n- Average Completion Rate: ${(averageCompletionRate * 100).toFixed(1)}%\n- Most Active Categories: ${mostActiveCategories.join(', ') || 'Not specified'}\n\nExisting Goals:\n${goalSummary}\n\nRequest Parameters:\n- Category: ${category}\n- Timeframe: ${timeframe}\n- Focus Area: ${focusArea || 'Not specified'}\n- Difficulty: ${difficulty || 'Not specified'}\n\nPlease suggest ${numberOfSuggestions} new goals that:\n1. Align with the user's preferences and past performance\n2. Complement (not duplicate) their existing goals\n3. Are appropriate for the ${timeframe} timeframe\n4. Fall within the ${category} category\n${focusArea ? `5. Focus on: ${focusArea}` : ''}\n${difficulty ? `6. Match difficulty level: ${difficulty}` : ''}\n7. Consider their ${(averageCompletionRate * 100).toFixed(1)}% completion rate when setting difficulty\n8. Build on their most active categories: ${mostActiveCategories.join(', ')}\n\nFor each goal, provide:\n- A clear, motivating title\n- A detailed description\n- Specific, measurable success criteria\n- Estimated time to complete\n- Difficulty level (beginner, intermediate, advanced)\n- Relevant tags or categories\n- Explanation of why this goal is suggested for this specific user`;\n\n// Return the prompt and metadata\nreturn [\n  {\n    json: {\n      prompt: prompt,\n      userId: userId,\n      userName: userName,\n      userEmail: userEmail,\n      category: category,\n      timeframe: timeframe,\n      numberOfSuggestions: numberOfSuggestions,\n      focusArea: focusArea,\n      difficulty: difficulty,\n      existingGoalsCount: existingGoals.length,\n      completedGoalsCount: completedGoalsCount,\n      activeGoalsCount: activeGoalsCount,\n      averageCompletionRate: averageCompletionRate,\n      mostActiveCategories: mostActiveCategories,\n      timestamp: new Date().toISOString()\n    }\n  }\n];"
+      },
+      "id": "a57d58a7-86d8-4e43-ade9-bd76043c025e",
+      "name": "Build AI Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1376,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Build AI Prompt').item.json.prompt }}",
+        "hasOutputParser": true,
+        "needsFallback": true,
+        "options": {}
+      },
+      "id": "313a9bfa-7476-4e5a-b6d0-e536810270bb",
+      "name": "AI Agent - Goal Suggestions",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1600,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"goal_suggestions\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"id\": {\n            \"type\": \"string\",\n            \"description\": \"Unique identifier for the goal suggestion\"\n          },\n          \"title\": {\n            \"type\": \"string\",\n            \"description\": \"Title of the suggested goal\"\n          },\n          \"description\": {\n            \"type\": \"string\",\n            \"description\": \"Detailed description of the goal\"\n          },\n          \"category\": {\n            \"type\": \"string\",\n            \"description\": \"Category of the goal (e.g., health, career, personal development)\"\n          },\n          \"difficulty\": {\n            \"type\": \"string\",\n            \"description\": \"Difficulty level of the goal (e.g., easy, medium, hard)\"\n          },\n          \"estimated_duration_days\": {\n            \"type\": \"number\",\n            \"description\": \"Estimated number of days to complete the goal\"\n          },\n          \"why_suggested\": {\n            \"type\": \"string\",\n            \"description\": \"Explanation of why this goal is suggested for the user\"\n          },\n          \"milestones\": {\n            \"type\": \"array\",\n            \"items\": {\n              \"type\": \"string\"\n            },\n            \"description\": \"List of milestones to achieve the goal\"\n          }\n        },\n        \"required\": [\"id\", \"title\", \"description\", \"category\", \"difficulty\", \"estimated_duration_days\", \"why_suggested\", \"milestones\"]\n      }\n    }\n  },\n  \"required\": [\"goal_suggestions\"]\n}"
+      },
+      "id": "500321ed-8375-40a8-9c20-260c926ad69e",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1792,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "id": "5650ae63-69e2-4383-8125-92c53e74273c",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1984,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-sonnet-4-5-20250929",
+          "mode": "list",
+          "cachedResultName": "Claude Sonnet 4.5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        1600,
+        672
+      ],
+      "id": "d81d542c-fa28-403e-8561-1a6ea3f686e6",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "T8KdKgTZpQKSpMKw",
+          "name": "250925_anthropicApi"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "gpt-5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1648,
+        816
+      ],
+      "id": "930b0746-555d-4b3b-9593-7c9f104a2274",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "0U2TFnoFrLX1Wtmd",
+          "name": "n8n - cloud OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook Trigger": [
+      {
+        "json": {
+          "headers": {
+            "host": "alexk1919.app.n8n.cloud",
+            "user-agent": "curl/8.8.0",
+            "content-length": "1478",
+            "accept": "*/*",
+            "accept-encoding": "gzip, br",
+            "authorization": "Bearer test-secret-token",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "2a09:bac5:65f4:2da5::48c:4a",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "US",
+            "cf-ray": "9925caab84ead254-LAX",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "x-forwarded-for": "2a09:bac5:65f4:2da5::48c:4a, 172.64.217.32",
+            "x-forwarded-host": "alexk1919.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-14-5654dfbc89-pkd5r",
+            "x-is-trusted": "yes",
+            "x-real-ip": "2a09:bac5:65f4:2da5::48c:4a"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "user": {
+              "id": "550e8400-e29b-41d4-a716-446655440000",
+              "email": "john.doe@example.com",
+              "metadata": {
+                "name": "John Doe",
+                "preferences": {
+                  "categories": [
+                    "Career",
+                    "Learning"
+                  ],
+                  "difficulty_preference": "moderate"
+                }
+              }
+            },
+            "context": {
+              "existing_goals": [
+                {
+                  "id": "goal-uuid-1",
+                  "title": "Learn TypeScript",
+                  "category": "Learning",
+                  "progress": 65,
+                  "status": "active",
+                  "target_date": "2025-12-31",
+                  "created_at": "2025-01-15T10:00:00Z"
+                },
+                {
+                  "id": "goal-uuid-2",
+                  "title": "Complete Next.js course",
+                  "category": "Learning",
+                  "progress": 30,
+                  "status": "active",
+                  "target_date": "2025-11-30",
+                  "created_at": "2025-02-01T14:00:00Z"
+                },
+                {
+                  "id": "goal-uuid-3",
+                  "title": "Build personal portfolio website",
+                  "category": "Career",
+                  "progress": 100,
+                  "status": "completed",
+                  "target_date": "2025-03-15",
+                  "created_at": "2024-12-01T10:00:00Z"
+                }
+              ],
+              "completed_goals_count": 5,
+              "active_goals_count": 2,
+              "average_completion_rate": 0.72,
+              "most_active_categories": [
+                "Learning",
+                "Career"
+              ],
+              "request_params": {
+                "suggestion_count": 5,
+                "categories": [
+                  "Learning",
+                  "Career",
+                  "Health",
+                  "Personal"
+                ],
+                "exclude_similar_to": []
+              }
+            },
+            "timestamp": "2025-10-21T15:30:00Z",
+            "request_id": "req-test-123"
+          },
+          "webhookUrl": "https://alexk1919.app.n8n.cloud/webhook-test/goal-suggestions",
+          "executionMode": "test"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "Build AI Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build AI Prompt": {
+      "main": [
+        [
+          {
+            "node": "AI Agent - Goal Suggestions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent - Goal Suggestions",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent - Goal Suggestions": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent - Goal Suggestions",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent - Goal Suggestions",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "errorWorkflow": "pdlDqgVFmbypGlQs"
+  },
+  "versionId": "bf2c3f3c-c643-4ad7-acfc-381535b0a848",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "06179470bfaafaa748f3d7490a93a695b61ee561a0931a3a52f890f4c452126d"
+  },
+  "id": "qpdMnzpQjK20g0we",
+  "tags": []
+}
