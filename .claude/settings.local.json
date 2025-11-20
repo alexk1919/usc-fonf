@@ -18,7 +18,8 @@
       "Bash(npm run build:*)",
       "mcp__supabase__get_advisors",
       "Bash(curl:*)",
-      "Bash(npx shadcn@latest add:*)"
+      "Bash(npx shadcn@latest add:*)",
+      "mcp__playwright__browser_resize"
     ],
     "deny": [],
     "ask": []
